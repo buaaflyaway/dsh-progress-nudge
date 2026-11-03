@@ -239,6 +239,7 @@ node test/smoke.mjs
 ## 8. 发布信息
 
 - npm：<https://www.npmjs.com/package/dsh-progress-nudge>（`dsh-progress-nudge@0.2.0`）
+- 已收录进作者维护的 DSH 插件市场（内部地址不在本仓库公开）
 - GitHub：<https://github.com/buaaflyaway/dsh-progress-nudge>
 - 许可证：MIT
 - 最低 dsh：`0.2.0-rc.2`（`engines.dsh` 限制在 `0.3.0` 之前）
