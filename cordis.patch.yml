@@ -1,0 +1,19 @@
+# Bundle patch layer for dsh-progress-nudge.
+#
+# The row loads the package's main entry as the Cordis Host plugin; the
+# `dsh.client` declaration in package.json makes the Web app load ./client.js
+# as the browser half (the Settings → 过程汇报 page).
+#
+# Values below are the shipped defaults; override any of them from the
+# profile's cordis.patch.yml with a top-level `- id: progress-nudge` entry (or
+# from the Settings page, which writes that same override), so the choice
+# survives package upgrades.
+- insert:
+    - id: progress-nudge
+      name: dsh-progress-nudge
+      config:
+        threshold: 10
+        repeat: true
+        includeSubagents: false
+        teamScope: lead
+        language: zh-CN

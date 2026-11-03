@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Progress Nudge",
+    "description": "Counts consecutive rounds where the model only calls tools without saying anything to the user, then injects a short progress reminder into the next model request. A Settings → Progress nudge page edits the threshold, reminder text, language, and the Agent Teams scope (Lead only or every agent)."
+  }
+}
