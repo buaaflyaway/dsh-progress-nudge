@@ -1,5 +1,8 @@
 # dsh-progress-nudge
 
+[![npm version](https://img.shields.io/npm/v/dsh-progress-nudge.svg)](https://www.npmjs.com/package/dsh-progress-nudge)
+[![license](https://img.shields.io/npm/l/dsh-progress-nudge.svg)](LICENSE)
+
 一个 DeepSeek Harness（dsh）插件：当模型连续多轮只发起工具调用、不向用户输出任何文字时，
 在**下一次模型请求之前**注入一条简短提醒，要求它先汇报进展再继续执行；一旦模型输出文字，计数器立刻归零。
 
@@ -142,10 +145,12 @@ agent/pre-step 瀑布 → 决策 messages 里多一条提醒
 
 安装（任选其一）：
 
-- 在 dsh 里用插件管理器安装这个**本地目录**（`install_bundle`，target 写 `file:<本目录绝对路径>`）；
-- 命令行：`dsh plugin --profile <profile> add file:<本目录绝对路径>`。
+- **npm 源安装（推荐）**：在插件管理器的安装框里填 `dsh-progress-nudge`，或命令行
+  `dsh plugin --profile <profile> add dsh-progress-nudge`；
+- **本地目录安装**：插件管理器里选本地目录（`install_bundle`，target 写 `file:<本目录绝对路径>`），
+  或命令行 `dsh plugin --profile <profile> add file:<本目录绝对路径>`。
 
-> 路径写法提醒：Windows 上如果工作区（如 `D:`）与 profile（`C:`）不在同一个盘，
+> 路径写法提醒（仅本地目录安装需要）：Windows 上如果工作区（如 `D:`）与 profile（`C:`）不在同一个盘，
 > 普通绝对路径或 `link:` 会被包管理器记成跨盘相对链接，装完解析不到这个包
 > （报 `cannot resolve profile bundle ...`）。用 `file:` 前缀可以避免：它会把包内容**复制**进 profile，
 > 代价是之后修改源码需要重新安装一次。
@@ -233,6 +238,8 @@ node test/smoke.mjs
 
 ## 8. 发布信息
 
+- npm：<https://www.npmjs.com/package/dsh-progress-nudge>（`dsh-progress-nudge@0.2.0`）
 - GitHub：<https://github.com/buaaflyaway/dsh-progress-nudge>
 - 许可证：MIT
 - 最低 dsh：`0.2.0-rc.2`（`engines.dsh` 限制在 `0.3.0` 之前）
+
