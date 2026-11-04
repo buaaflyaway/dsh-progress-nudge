@@ -17,6 +17,10 @@
 
 ![插件页中的进度提醒](docs/screenshots/plugins-page.png)
 
+「设置 → 过程汇报」页面（阈值、文案、语言、重复提醒、子代理、智能体团队范围，保存后立即生效）：
+
+![设置页中的过程汇报](docs/screenshots/settings-page.png)
+
 ---
 
 ## 1. 它具体做了什么

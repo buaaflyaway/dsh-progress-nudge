@@ -143,7 +143,7 @@ window.__ModuleLoader__.load({
 
     /** Styles for the page; one scoped tag, removed with the plugin. */
     const CSS = [
-      '.pn-section{display:flex;flex-direction:column;gap:18px;max-width:620px;padding:4px 0 28px;color:var(--dsw-alias-label-primary);font-size:13px;line-height:20px}',
+      '.pn-section{display:flex;flex-direction:column;gap:14px;max-width:620px;padding:0 0 12px;color:var(--dsw-alias-label-primary);font-size:13px;line-height:20px}',
       '.pn-head{display:flex;flex-direction:column;gap:6px}',
       '.pn-title{margin:0;font-size:16px;font-weight:600;line-height:24px}',
       '.pn-desc{margin:0;color:var(--dsw-alias-label-secondary)}',
@@ -153,11 +153,11 @@ window.__ModuleLoader__.load({
       '.pn-input,.pn-select,.pn-textarea{box-sizing:border-box;width:100%;padding:7px 10px;border:1px solid var(--dsw-alias-border-l1);border-radius:8px;background:var(--dsw-alias-bg-layer-1);color:var(--dsw-alias-label-primary);font:inherit;outline:none}',
       '.pn-input:focus,.pn-select:focus,.pn-textarea:focus{border-color:var(--dsw-alias-brand-primary)}',
       '.pn-input:disabled,.pn-select:disabled,.pn-textarea:disabled{opacity:.6;cursor:not-allowed}',
-      '.pn-textarea{min-height:96px;resize:vertical;line-height:20px}',
+      '.pn-textarea{min-height:72px;resize:vertical;line-height:20px}',
       '.pn-check{display:flex;align-items:center;gap:8px;font-weight:500}',
       '.pn-check input{width:15px;height:15px;accent-color:var(--dsw-alias-brand-primary)}',
       '.pn-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}',
-      '.pn-button{appearance:none;border:none;border-radius:8px;padding:6px 14px;font:inherit;font-weight:500;cursor:pointer;background:var(--dsw-alias-brand-primary);color:#fff}',
+      '.pn-button{appearance:none;border:none;border-radius:8px;padding:6px 14px;font:inherit;font-weight:500;cursor:pointer;background:var(--dsw-alias-label-primary);color:var(--dsw-alias-bg-base)}',
       '.pn-button:disabled{opacity:.5;cursor:not-allowed}',
       '.pn-button.ghost{background:transparent;color:var(--dsw-alias-label-secondary);border:1px solid var(--dsw-alias-border-l1)}',
       '.pn-status{font-size:12px;color:var(--dsw-alias-label-secondary)}',
@@ -166,8 +166,8 @@ window.__ModuleLoader__.load({
       '.pn-note{padding:12px 14px;border:1px solid var(--dsw-alias-border-l1);border-radius:10px;color:var(--dsw-alias-label-secondary)}',
     ].join('\n')
 
-    /** Names the plugin row may have in `settings.describe()` (row id, or the loader path). */
-    const NAMESPACE_CANDIDATES = ['progress-nudge', 'include:progress-nudge']
+    /** Names the plugin row may have in `settings.describe()` (row id, loader path, or package name). */
+    const NAMESPACE_CANDIDATES = ['progress-nudge', 'include:progress-nudge', 'dsh-progress-nudge']
 
     /** Title shown in the Settings navigation; refreshed whenever the page loads or saves. */
     let navTitle = DICTIONARIES['zh-CN'].title
@@ -191,7 +191,17 @@ window.__ModuleLoader__.load({
         const hit = list.find((view) => view && view.ns === candidate)
         if (hit !== undefined) return hit
       }
-      return list.find((view) => typeof view?.ns === 'string' && view.ns.endsWith(':progress-nudge'))
+      const renamed = list.find((view) => typeof view?.ns === 'string' && view.ns.endsWith(':progress-nudge'))
+      if (renamed !== undefined) return renamed
+      // Last resort: identify the entry by a field only this plugin declares, so a
+      // loader-side id rename cannot leave the page permanently unavailable.
+      return list.find((view) => {
+        try {
+          return JSON.stringify(view?.schema ?? null).includes('teamScope')
+        } catch {
+          return false
+        }
+      })
     }
 
     /** Project one namespace value into the page's draft, filling defaults. */
@@ -240,8 +250,14 @@ window.__ModuleLoader__.load({
         let alive = true
         remote
           .describe()
-          .then((result) => {
+          .then((response) => {
             if (!alive) return
+            // Remote methods answer a result envelope ({ ok, value } | { ok: false, error }),
+            // unlike a plain local call: unwrap it before reading the settings view.
+            if (response === null || response === undefined || response.ok !== true) {
+              throw new Error(response?.error?.message ?? 'settings.describe failed')
+            }
+            const result = response.value
             const found = findNamespace(result?.namespaces)
             if (found === undefined) {
               setPhase('missing')
@@ -305,7 +321,11 @@ window.__ModuleLoader__.load({
             },
             view.revision,
           )
-          .then((updated) => {
+          .then((response) => {
+            if (response === null || response === undefined || response.ok !== true) {
+              throw new Error(response?.error?.message ?? 'settings.update failed')
+            }
+            const updated = response.value
             const next = draftOf(updated?.value)
             navTitle = dictionaryOf(next.language).title
             setView(updated)
