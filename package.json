@@ -1,6 +1,6 @@
 {
   "name": "dsh-progress-nudge",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Keeps a quiet agent reportable: counts consecutive tool-only rounds and injects a short progress reminder into the next model request, with a Settings page for threshold, wording, language, and Agent Teams scope.",
   "type": "module",
   "main": "index.js",
